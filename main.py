@@ -1,14 +1,22 @@
 import tkinter as tk
+from tkinter import font as tkfont
 import random
+
 
 game_width = 1000
 game_height = 700
 speed = 100
 space_size = 50
 body_parts = 3
+# Cores
 snake_color = "#00FF00"
 food_color = "#FF0000"
 background_color = "#000000"
+BACKGROUND_COLOR = "#1E1E1E"  # Cor de fundo escura
+TITLE_COLOR = "#00FF00"       # Verde para o título
+BUTTON_COLOR = "#333333"      # Cor dos botões
+BUTTON_HOVER_COLOR = "#555555"  # Cor dos botões ao passar o mouse
+TEXT_COLOR = "#FFFFFF"        # Cor do texto
 
 # Função que cria e aumenta a cobra
 class Snake:
@@ -157,6 +165,25 @@ def exit_game():
 # Função para exibir recordes (a ser implementada)
 def records():
     pass
+
+# Função para criar botões estilizados
+def create_button(parent, text, command):
+    button = tk.Button(
+        parent,
+        text=text,
+        font=('consolas', 20),
+        bg=BUTTON_COLOR,
+        fg=TEXT_COLOR,
+        activebackground=BUTTON_HOVER_COLOR,
+        activeforeground=TEXT_COLOR,
+        relief="flat",
+        borderwidth=0,
+        command=command
+    )
+    button.bind("<Enter>", lambda e: button.config(bg=BUTTON_HOVER_COLOR))
+    button.bind("<Leave>", lambda e: button.config(bg=BUTTON_COLOR))
+    return button
+
 
 # Criação da janela principal
 window = tk.Tk()

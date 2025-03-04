@@ -155,8 +155,30 @@ def start_game():
 # Função para mostrar o menu
 def show_menu():
     canvas.pack_forget()  # Esconde o canvas do jogo
-    label.pack_forget()  # Esconde a label do score
-    menu_frame.pack()  # Mostra o menu inicial
+    label.pack_forget()   # Esconde a label do score
+    menu_frame.pack(expand=True, fill="both")  # Mostra o menu inicial
+
+    # Título do jogo
+    title_label = tk.Label(
+        menu_frame,
+        text="Snake Game",
+        font=('consolas', 50, 'bold'),
+        fg=TITLE_COLOR,
+        bg=BACKGROUND_COLOR
+    )
+    title_label.pack(pady=50)
+
+    # Botão "Iniciar"
+    start_button = create_button(menu_frame, "Iniciar", start_game)
+    start_button.pack(pady=20)
+
+    # Botão "Recordes"
+    records_button = create_button(menu_frame, "Recordes", records)
+    records_button.pack(pady=20)
+
+    # Botão "Sair"
+    exit_button = create_button(menu_frame, "Sair", exit_game)
+    exit_button.pack(pady=20)
 
 # Função para sair do jogo
 def exit_game():
@@ -189,29 +211,20 @@ def create_button(parent, text, command):
 window = tk.Tk()
 window.title("Snake Game")
 window.resizable(False, False)
+window.configure(bg=BACKGROUND_COLOR)
 
 # Variáveis do jogo
 score = 0
 direction = 'down'
 
 # Criação da barra do score
-label = tk.Label(window, text="Score: 0", font=('consolas', 40), bg='black', fg='white')
-
+label = tk.Label(window, text="Score: 0", font=('consolas', 40), bg=BACKGROUND_COLOR, fg=TEXT_COLOR)
 
 # Criação do canvas/ambiente em que a cobra vai andar
 canvas = tk.Canvas(window, bg=background_color, height=game_height, width=game_width)
 
 # Criação do menu inicial
-menu_frame = tk.Frame(window)
-
-start_button = tk.Button(menu_frame, text="Iniciar", font=('consolas', 40), command=start_game)
-start_button.pack()
-
-records_button = tk.Button(menu_frame, text="Recordes", font=('consolas', 40), command=records)
-records_button.pack()
-
-exit_button = tk.Button(menu_frame, text="Sair", font=('consolas', 40), command=exit_game)
-exit_button.pack()
+menu_frame = tk.Frame(window, bg=BACKGROUND_COLOR)
 
 # Mostra o menu inicial ao iniciar o programa
 show_menu()

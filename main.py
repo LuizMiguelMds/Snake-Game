@@ -26,19 +26,30 @@ class Snake:
 
 # Função que cria a comida da cobra
 class Food:
-    def __init__(self):
-        x = random.randint(0, int(game_width / space_size) - 1) * space_size
-        y = random.randint(0, int(game_height / space_size) - 1) * space_size
-
-        self.coordinates = [x, y]
-        canvas.create_oval(x, y, x + space_size, y + space_size, fill=food_color, tags="food")
+    def __init__(self, canvas, space_size, game_width, game_height, snake_coordinates):
+        # Considera a altura da label subtraindo um espaço adicional
+        label_buffer = 100  # Ajuste este valor conforme necessário
+        
+        while True:
+            # Limita a geração de x entre 0 e game_width
+            x = random.randint(0, int(game_width / space_size) - 1) * space_size
+            
+            # Limita a geração de y considerando a label
+            y = random.randint(
+                int(label_buffer / space_size), 
+                int((game_height - label_buffer) / space_size) - 1
+            ) * space_size
+            
+            # Verifica se a nova posição não coincide com a cobra
+            if [x, y] not in snake_coordinates:
+                self.coordinates = [x, y]
+                canvas.create_oval(x, y, x + space_size, y + space_size, fill=food_color, tags="food")
+                break
 
 # Função para prosseguir para o próximo turno
 def next_turn(snake):
     global food, score
-
     x, y = snake.coordinates[0]
-
     if direction == "up":
         y -= space_size
     elif direction == "down":
@@ -47,21 +58,21 @@ def next_turn(snake):
         x -= space_size
     elif direction == "right":
         x += space_size
-
+    
     snake.coordinates.insert(0, (x, y))
     square = canvas.create_rectangle(x, y, x + space_size, y + space_size, fill=snake_color)
     snake.squares.insert(0, square)
-
+    
     if x == food.coordinates[0] and y == food.coordinates[1]:
         score += 1
         label.config(text="Score: {}".format(score))
         canvas.delete("food")
-        food = Food()
+        food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
     else:
         del snake.coordinates[-1]
         canvas.delete(snake.squares[-1])
         del snake.squares[-1]
-
+    
     if check_collisions(snake):
         game_over()
     else:
@@ -122,14 +133,14 @@ def return_to_menu():
 # Função para iniciar o jogo
 def start_game():
     global snake, food, score, direction
-    menu_frame.pack_forget()  # Esconde o menu
-    label.config(text="Score: 0")  # Configura o texto antes de empacotar
-    label.pack()  # Primeiro empacota a label
-    canvas.pack()  # Depois empacota o canvas
+    menu_frame.pack_forget()
+    label.config(text="Score: 0")
+    label.pack()
+    canvas.pack()
     score = 0
     direction = 'down'
     snake = Snake()
-    food = Food()
+    food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
     next_turn(snake)
 
 

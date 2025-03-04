@@ -122,22 +122,22 @@ def return_to_menu():
 # Função para iniciar o jogo
 def start_game():
     global snake, food, score, direction
-    menu_frame.pack_forget()
-    canvas.pack()
-    label.pack()
+    menu_frame.pack_forget()  # Esconde o menu
+    label.config(text="Score: 0")  # Configura o texto antes de empacotar
+    label.pack()  # Primeiro empacota a label
+    canvas.pack()  # Depois empacota o canvas
     score = 0
     direction = 'down'
-    label.config(text="Score: {}".format(score))
-    canvas.delete("all")
     snake = Snake()
     food = Food()
     next_turn(snake)
 
+
 # Função para mostrar o menu
 def show_menu():
-    canvas.pack_forget()
-    label.pack_forget()
-    menu_frame.pack()
+    canvas.pack_forget()  # Esconde o canvas do jogo
+    label.pack_forget()  # Esconde a label do score
+    menu_frame.pack()  # Mostra o menu inicial
 
 # Função para sair do jogo
 def exit_game():
@@ -157,8 +157,8 @@ score = 0
 direction = 'down'
 
 # Criação da barra do score
-label = tk.Label(window, text="Score: {}".format(score), font=('consolas', 40))
-label.pack()
+label = tk.Label(window, text="Score: 0", font=('consolas', 40), bg='black', fg='white')
+
 
 # Criação do canvas/ambiente em que a cobra vai andar
 canvas = tk.Canvas(window, bg=background_color, height=game_height, width=game_width)
@@ -175,6 +175,7 @@ records_button.pack()
 exit_button = tk.Button(menu_frame, text="Sair", font=('consolas', 40), command=exit_game)
 exit_button.pack()
 
+# Mostra o menu inicial ao iniciar o programa
 show_menu()
 
 # Configura o tamanho da janela para acomodar o canvas e o label

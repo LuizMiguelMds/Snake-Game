@@ -1,14 +1,13 @@
 import tkinter as tk
-from tkinter import font as tkfont
+from tkinter import simpledialog
 import random
 
-
+# Configurações do jogo
 game_width = 1000
 game_height = 700
 speed = 100
 space_size = 50
 body_parts = 3
-# Cores
 snake_color = "#00FF00"
 food_color = "#FF0000"
 background_color = "#000000"
@@ -35,20 +34,9 @@ class Snake:
 # Função que cria a comida da cobra
 class Food:
     def __init__(self, canvas, space_size, game_width, game_height, snake_coordinates):
-        # Considera a altura da label subtraindo um espaço adicional
-        label_buffer = 100  # Ajuste este valor conforme necessário
-        
         while True:
-            # Limita a geração de x entre 0 e game_width
             x = random.randint(0, int(game_width / space_size) - 1) * space_size
-            
-            # Limita a geração de y considerando a label
-            y = random.randint(
-                int(label_buffer / space_size), 
-                int((game_height - label_buffer) / space_size) - 1
-            ) * space_size
-            
-            # Verifica se a nova posição não coincide com a cobra
+            y = random.randint(0, int(game_height / space_size) - 1) * space_size
             if [x, y] not in snake_coordinates:
                 self.coordinates = [x, y]
                 canvas.create_oval(x, y, x + space_size, y + space_size, fill=food_color, tags="food")
@@ -154,7 +142,6 @@ def start_game():
     snake = Snake()
     food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
     next_turn(snake)
-
 
 # Função para mostrar o menu
 def show_menu():
@@ -269,12 +256,6 @@ def show_records():
 # Função para exibir o menu de recordes
 def records():
     show_records()
-
-# Função para retornar ao menu
-def return_to_menu():
-    canvas.delete("all")
-    show_menu()
-    window.unbind('<Return>')
 
 # Função para salvar a pontuação e retornar ao menu
 def save_score_and_return(score):

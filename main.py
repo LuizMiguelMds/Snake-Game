@@ -178,7 +178,28 @@ def show_difficulty_menu():
     # Botão "Voltar ao Menu"
     back_button = create_button(difficulty_frame, "Voltar ao Menu", show_menu)
     back_button.pack(pady=20)
-    
+
+# Função para definir a dificuldade
+def set_difficulty(difficulty):
+    global speed, snake_color, background_color
+
+    if difficulty == "Fácil":
+        speed = 150  # Mais lento
+        snake_color = "#90EE90"  # Verde claro
+        background_color = "#ADD8E6"  # Azul claro
+    elif difficulty == "Médio":
+        speed = 100  # Padrão
+        snake_color = "#00FF00"  # Verde
+        background_color = "#000000"  # Preto
+    elif difficulty == "Difícil":
+        speed = 50  # Mais rápido
+        snake_color = "#00008B"  # Azul escuro
+        background_color = "#FFFF00"  # Amarelo
+
+    # Atualiza as cores do canvas
+    canvas.config(bg=background_color)
+    start_game()
+
 # Função para mostrar o menu
 def show_menu():
     # Esconde o canvas e a label do score

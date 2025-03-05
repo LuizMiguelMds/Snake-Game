@@ -97,9 +97,10 @@ def change_direction(new_direction):
 def check_collisions(snake):
     x, y = snake.coordinates[0]
 
-    if x < 0 or x >= game_width:
+    # Ajusta os limites considerando o tamanho de um bloco (space_size)
+    if x < 0 or x >= game_width - space_size:
         return True
-    elif y < 0 or y >= game_height:
+    elif y < 0 or y >= game_height - space_size:
         return True
 
     for body_part in snake.coordinates[1:]:

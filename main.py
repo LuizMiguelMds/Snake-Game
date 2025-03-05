@@ -19,7 +19,7 @@ BUTTON_COLOR = "#333333"      # Cor dos botões
 BUTTON_HOVER_COLOR = "#555555"  # Cor dos botões ao passar o mouse
 TEXT_COLOR = "#FFFFFF"        # Cor do texto
 
-# Função que cria e aumenta a cobra
+# Objeto da cobra
 class Snake:
     def __init__(self):
         self.body_size = body_parts
@@ -33,12 +33,15 @@ class Snake:
             square = canvas.create_rectangle(x, y, x + space_size, y + space_size, fill=snake_color, tag="snake")
             self.squares.append(square)
 
-# Função que cria a comida da cobra
+# Objeto comida da cobra
 class Food:
     def __init__(self, canvas, space_size, game_width, game_height, snake_coordinates):
         while True:
-            x = random.randint(0, int(game_width / space_size) - 1) * space_size
-            y = random.randint(0, int(game_height / space_size) - 1) * space_size
+            # Ajusta a geração para considerar o tamanho do bloco
+            x = random.randint(0, int((game_width - space_size) / space_size)) * space_size
+            y = random.randint(0, int((game_height - space_size) / space_size)) * space_size
+            
+            # Verifica se a nova posição não coincide com a cobra
             if [x, y] not in snake_coordinates:
                 self.coordinates = [x, y]
                 canvas.create_oval(x, y, x + space_size, y + space_size, fill=food_color, tags="food")

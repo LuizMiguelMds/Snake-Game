@@ -213,11 +213,58 @@ def create_button(parent, text, command):
     button.bind("<Leave>", lambda e: button.config(bg=BUTTON_COLOR))
     return button
 
+# Função para salvar a pontuação
 def save_score(score):
     player_name = simpledialog.askstring("Recorde", "Digite seu nome:", parent=window)
     if player_name:
         with open("records.txt", "a") as file:
             file.write(f"{player_name}: {score}\n")
+
+# Função para exibir os recordes
+def show_records():
+    try:
+        with open("records.txt", "r") as file:
+            records = file.readlines()
+        
+        records.sort(key=lambda x: int(x.split(": ")[1]), reverse=True)
+        
+        for widget in menu_frame.winfo_children():
+            widget.destroy()
+        
+        title_label = tk.Label(
+            menu_frame,
+            text="Recordes",
+            font=('consolas', 50, 'bold'),
+            fg=TITLE_COLOR,
+            bg=BACKGROUND_COLOR
+        )
+        title_label.pack(pady=20)
+
+        for record in records[:10]:
+            record_label = tk.Label(
+                menu_frame,
+                text=record.strip(),
+                font=('consolas', 20),
+                fg=TEXT_COLOR,
+                bg=BACKGROUND_COLOR
+            )
+            record_label.pack(pady=5)
+
+        back_button = create_button(menu_frame, "Voltar ao Menu", show_menu)
+        back_button.pack(pady=20)
+
+    except FileNotFoundError:
+        no_records_label = tk.Label(
+            menu_frame,
+            text="Nenhum recorde encontrado!",
+            font=('consolas', 30),
+            fg=TEXT_COLOR,
+            bg=BACKGROUND_COLOR
+        )
+        no_records_label.pack(pady=50)
+
+        back_button = create_button(menu_frame, "Voltar ao Menu", show_menu)
+        back_button.pack(pady=20)
 
 
 # Criação da janela principal

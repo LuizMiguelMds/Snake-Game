@@ -154,9 +154,13 @@ def start_game():
 
 # Função para mostrar o menu
 def show_menu():
-    canvas.pack_forget()  # Esconde o canvas do jogo
-    label.pack_forget()   # Esconde a label do score
-    menu_frame.pack(expand=True, fill="both")  # Mostra o menu inicial
+    # Esconde o canvas e a label do score
+    canvas.pack_forget()
+    label.pack_forget()
+
+    # Limpa o menu_frame antes de adicionar novos widgets
+    for widget in menu_frame.winfo_children():
+        widget.destroy()
 
     # Título do jogo
     title_label = tk.Label(
@@ -179,6 +183,9 @@ def show_menu():
     # Botão "Sair"
     exit_button = create_button(menu_frame, "Sair", exit_game)
     exit_button.pack(pady=20)
+
+    # Mostra o menu_frame
+    menu_frame.pack(expand=True, fill="both")
 
 # Função para sair do jogo
 def exit_game():
@@ -205,6 +212,12 @@ def create_button(parent, text, command):
     button.bind("<Enter>", lambda e: button.config(bg=BUTTON_HOVER_COLOR))
     button.bind("<Leave>", lambda e: button.config(bg=BUTTON_COLOR))
     return button
+
+def save_score(score):
+    player_name = simpledialog.askstring("Recorde", "Digite seu nome:", parent=window)
+    if player_name:
+        with open("records.txt", "a") as file:
+            file.write(f"{player_name}: {score}\n")
 
 
 # Criação da janela principal

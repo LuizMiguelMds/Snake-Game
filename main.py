@@ -272,6 +272,10 @@ def return_to_menu():
     show_menu()
     window.unbind('<Return>')
 
+# Função para salvar a pontuação e retornar ao menu
+def save_score_and_return(score):
+    save_score(score)
+    return_to_menu()
 
 # Criação da janela principal
 window = tk.Tk()

@@ -2,15 +2,17 @@ import tkinter as tk
 from tkinter import simpledialog
 import random
 
-# Configurações do jogo
+# Configurações iniciais do jogo
 game_width = 1000
 game_height = 700
-speed = 100
+speed = 100  # Velocidade padrão (Médio)
 space_size = 50
 body_parts = 3
-snake_color = "#00FF00"
-food_color = "#FF0000"
-background_color = "#000000"
+snake_color = "#00FF00"  # Verde (padrão)
+food_color = "#FF0000"   # Vermelho
+background_color = "#000000"  # Preto (padrão)
+
+# Cores do menu
 BACKGROUND_COLOR = "#1E1E1E"  # Cor de fundo escura
 TITLE_COLOR = "#00FF00"       # Verde para o título
 BUTTON_COLOR = "#333333"      # Cor dos botões
@@ -143,19 +145,15 @@ def start_game():
     food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
     next_turn(snake)
 
-
 # Função para mostrar o menu de dificuldade
 def show_difficulty_menu():
-    # Esconde o menu inicial
-    menu_frame.pack_forget()
-
-    # Cria um novo frame para o menu de dificuldade
-    difficulty_frame = tk.Frame(window, bg=BACKGROUND_COLOR)
-    difficulty_frame.pack(expand=True, fill="both")
+    # Limpa o menu_frame antes de adicionar novos widgets
+    for widget in menu_frame.winfo_children():
+        widget.destroy()
 
     # Título do menu de dificuldade
     title_label = tk.Label(
-        difficulty_frame,
+        menu_frame,
         text="Selecione a Dificuldade",
         font=('consolas', 50, 'bold'),
         fg=TITLE_COLOR,
@@ -164,20 +162,23 @@ def show_difficulty_menu():
     title_label.pack(pady=50)
 
     # Botão "Fácil"
-    easy_button = create_button(difficulty_frame, "Fácil", lambda: set_difficulty("Fácil"))
+    easy_button = create_button(menu_frame, "Fácil", lambda: set_difficulty("Fácil"))
     easy_button.pack(pady=20)
 
     # Botão "Médio"
-    medium_button = create_button(difficulty_frame, "Médio", lambda: set_difficulty("Médio"))
+    medium_button = create_button(menu_frame, "Médio", lambda: set_difficulty("Médio"))
     medium_button.pack(pady=20)
 
     # Botão "Difícil"
-    hard_button = create_button(difficulty_frame, "Difícil", lambda: set_difficulty("Difícil"))
+    hard_button = create_button(menu_frame, "Difícil", lambda: set_difficulty("Difícil"))
     hard_button.pack(pady=20)
 
     # Botão "Voltar ao Menu"
-    back_button = create_button(difficulty_frame, "Voltar ao Menu", show_menu)
+    back_button = create_button(menu_frame, "Voltar ao Menu", show_menu)
     back_button.pack(pady=20)
+
+    # Garante que o menu_frame esteja visível
+    menu_frame.pack(expand=True, fill="both")
 
 # Função para definir a dificuldade
 def set_difficulty(difficulty):
@@ -200,7 +201,7 @@ def set_difficulty(difficulty):
     canvas.config(bg=background_color)
     start_game()
 
-# Função para mostrar o menu
+# Função para mostrar o menu inicial
 def show_menu():
     # Esconde o canvas e a label do score
     canvas.pack_forget()
@@ -221,7 +222,7 @@ def show_menu():
     title_label.pack(pady=50)
 
     # Botão "Iniciar"
-    start_button = create_button(menu_frame, "Iniciar", start_game)
+    start_button = create_button(menu_frame, "Iniciar", show_difficulty_menu)
     start_button.pack(pady=20)
 
     # Botão "Recordes"

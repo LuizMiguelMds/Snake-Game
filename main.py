@@ -197,9 +197,24 @@ def set_difficulty(difficulty):
         snake_color = "#00008B"  # Azul escuro
         background_color = "#FFFF00"  # Amarelo
 
+    # Esconde o menu_frame
+    menu_frame.pack_forget()
+
     # Atualiza as cores do canvas
     canvas.config(bg=background_color)
-    start_game()
+
+    # Configura a label e o canvas
+    label.config(text="Score: 0")
+    label.pack()
+    canvas.pack()
+
+    # Inicia o jogo
+    global snake, food, score, direction
+    score = 0
+    direction = 'down'
+    snake = Snake()
+    food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
+    next_turn(snake)
 
 # Função para mostrar o menu inicial
 def show_menu():

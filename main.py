@@ -191,10 +191,6 @@ def show_menu():
 def exit_game():
     window.quit()
 
-# Função para exibir recordes (a ser implementada)
-def records():
-    pass
-
 # Função para criar botões estilizados
 def create_button(parent, text, command):
     button = tk.Button(
@@ -265,6 +261,10 @@ def show_records():
 
         back_button = create_button(menu_frame, "Voltar ao Menu", show_menu)
         back_button.pack(pady=20)
+
+# Função para exibir o menu de recordes
+def records():
+    show_records()
 
 
 # Criação da janela principal

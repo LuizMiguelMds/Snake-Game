@@ -33,19 +33,49 @@ class Snake:
             square = canvas.create_rectangle(x, y, x + space_size, y + space_size, fill=snake_color, tag="snake")
             self.squares.append(square)
 
-# Objeto comida da cobra
 class Food:
     def __init__(self, canvas, space_size, game_width, game_height, snake_coordinates):
-        while True:
-            # Ajusta a geração para considerar o tamanho do bloco
-            x = random.randint(0, int((game_width - space_size) / space_size)) * space_size
-            y = random.randint(0, int((game_height - space_size) / space_size)) * space_size
+        max_x = int(game_width / space_size) - 1
+        max_y = int((game_height - 50) / space_size) - 1  # Subtrai 50 pixels para a label
+        
+        attempts = 0
+        max_attempts = 100
+        
+        while attempts < max_attempts:
+            x = random.randint(0, max_x) * space_size
+            y = random.randint(0, max_y) * space_size
             
-            # Verifica se a nova posição não coincide com a cobra
-            if [x, y] not in snake_coordinates:
+            print(f"Attempting food generation: x={x}, y={y}")
+            print(f"Canvas limits - Width: {game_width}, Height: {game_height}")
+            print(f"Max X: {max_x}, Max Y: {max_y}")
+            print(f"Snake coordinates: {snake_coordinates}")
+            
+            if ([x, y] not in snake_coordinates and 
+                0 <= x < game_width and 
+                0 <= y < (game_height - 50)):  # Ajusta limite superior para considerar a label
                 self.coordinates = [x, y]
-                canvas.create_oval(x, y, x + space_size, y + space_size, fill=food_color, tags="food")
-                break
+                print(f"Food successfully generated at: x={x}, y={y}")
+                canvas.create_oval(
+                    x, y, 
+                    x + space_size, y + space_size, 
+                    fill=food_color, 
+                    tags="food"
+                )
+                return
+            
+            attempts += 1
+        
+        # Fallback: se não conseguir gerar comida, usa uma posição padrão
+        x = (max_x // 2) * space_size
+        y = (max_y // 2) * space_size
+        self.coordinates = [x, y]
+        print(f"Fallback food generation at: x={x}, y={y}")
+        canvas.create_oval(
+            x, y, 
+            x + space_size, y + space_size, 
+            fill=food_color, 
+            tags="food"
+        )
 
 # Função para prosseguir para o próximo turno
 def next_turn(snake):
@@ -100,19 +130,23 @@ def change_direction(new_direction):
 def check_collisions(snake):
     x, y = snake.coordinates[0]
 
-    # Ajusta os limites considerando o tamanho de um bloco (space_size)
-    if x < 0 or x >= game_width - space_size:
+    # Verifica colisões com as bordas
+    if x < 0:  # Borda esquerda
         return True
-    elif y < 0 or y >= game_height - space_size:
+    elif x >= game_width:  # Borda direita (sem subtrair space_size)
+        return True
+    elif y < 0:  # Borda superior
+        return True
+    elif y >= game_height:  # Borda inferior
         return True
 
+    # Verifica colisão com o próprio corpo
     for body_part in snake.coordinates[1:]:
         if x == body_part[0] and y == body_part[1]:
             return True
 
     return False
 
-# Função para encerrar o jogo
 def game_over():
     canvas.delete("all")
     canvas.create_text(
@@ -128,7 +162,17 @@ def game_over():
         font=('consolas', 30), text="Pressione Enter para continuar",
         fill="white", tag="gameover"
     )
-    window.bind('<Return>', lambda event: save_score_and_return(score))
+    
+    # Remove qualquer binding anterior
+    window.unbind('<Return>')
+    
+    # Cria um novo binding para salvar a pontuação
+    window.bind('<Return>', lambda event: save_score_and_return_delayed(score))
+
+def save_score_and_return_delayed(final_score):
+    # Usa after para garantir que a interface esteja responsiva
+    window.after(100, lambda: save_score(final_score))
+    return_to_menu()
 
 # Função para retornar ao menu
 def return_to_menu():
@@ -186,39 +230,27 @@ def show_difficulty_menu():
 
 # Função para definir a dificuldade
 def set_difficulty(difficulty):
-    global speed, snake_color, background_color
+    global speed, snake_color, background_color, current_difficulty
 
     if difficulty == "Fácil":
-        speed = 150  # Mais lento
-        snake_color = "#90EE90"  # Verde claro
-        background_color = "#ADD8E6"  # Azul claro
+        speed = 150
+        snake_color = "#90EE90"
+        background_color = "#ADD8E6"
+        current_difficulty = "Fácil"
     elif difficulty == "Médio":
-        speed = 100  # Padrão
-        snake_color = "#00FF00"  # Verde
-        background_color = "#000000"  # Preto
+        speed = 100
+        snake_color = "#00FF00"
+        background_color = "#000000"
+        current_difficulty = "Médio"
     elif difficulty == "Difícil":
-        speed = 50  # Mais rápido
-        snake_color = "#00008B"  # Azul escuro
-        background_color = "#FFFF00"  # Amarelo
-
-    # Esconde o menu_frame
-    menu_frame.pack_forget()
+        speed = 50
+        snake_color = "#00008B"
+        background_color = "#FFFF00"
+        current_difficulty = "Difícil"
 
     # Atualiza as cores do canvas
     canvas.config(bg=background_color)
-
-    # Configura a label e o canvas
-    label.config(text="Score: 0")
-    label.pack()
-    canvas.pack()
-
-    # Inicia o jogo
-    global snake, food, score, direction
-    score = 0
-    direction = 'down'
-    snake = Snake()
-    food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
-    next_turn(snake)
+    start_game()
 
 # Função para mostrar o menu inicial
 def show_menu():
@@ -290,7 +322,8 @@ def show_records():
         with open("records.txt", "r") as file:
             records = file.readlines()
         
-        records.sort(key=lambda x: int(x.split(": ")[1]), reverse=True)
+        # Ordena os recordes por pontuação (número antes do parênteses)
+        records.sort(key=lambda x: int(x.split(":")[1].split("(")[0].strip()), reverse=True)
         
         for widget in menu_frame.winfo_children():
             widget.destroy()
@@ -334,10 +367,13 @@ def show_records():
 def records():
     show_records()
 
-# Função para salvar a pontuação e retornar ao menu
-def save_score_and_return(score):
-    save_score(score)
-    return_to_menu()
+# Função para salvar a pontuação
+def save_score(score):
+    player_name = simpledialog.askstring("Recorde", "Digite seu nome:", parent=window)
+    if player_name:
+        with open("records.txt", "a") as file:
+            # Salva nome, pontuação e dificuldade
+            file.write(f"{player_name}: {score} (Dificuldade: {current_difficulty})\n")
 
 # Criação da janela principal
 window = tk.Tk()
@@ -348,6 +384,7 @@ window.configure(bg=BACKGROUND_COLOR)
 # Variáveis do jogo
 score = 0
 direction = 'down'
+current_difficulty = "Médio"
 
 # Criação da barra do score
 label = tk.Label(window, text="Score: 0", font=('consolas', 40), bg=BACKGROUND_COLOR, fg=TEXT_COLOR)

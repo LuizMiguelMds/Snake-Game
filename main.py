@@ -143,6 +143,42 @@ def start_game():
     food = Food(canvas, space_size, game_width, game_height, snake.coordinates)
     next_turn(snake)
 
+
+# Função para mostrar o menu de dificuldade
+def show_difficulty_menu():
+    # Esconde o menu inicial
+    menu_frame.pack_forget()
+
+    # Cria um novo frame para o menu de dificuldade
+    difficulty_frame = tk.Frame(window, bg=BACKGROUND_COLOR)
+    difficulty_frame.pack(expand=True, fill="both")
+
+    # Título do menu de dificuldade
+    title_label = tk.Label(
+        difficulty_frame,
+        text="Selecione a Dificuldade",
+        font=('consolas', 50, 'bold'),
+        fg=TITLE_COLOR,
+        bg=BACKGROUND_COLOR
+    )
+    title_label.pack(pady=50)
+
+    # Botão "Fácil"
+    easy_button = create_button(difficulty_frame, "Fácil", lambda: set_difficulty("Fácil"))
+    easy_button.pack(pady=20)
+
+    # Botão "Médio"
+    medium_button = create_button(difficulty_frame, "Médio", lambda: set_difficulty("Médio"))
+    medium_button.pack(pady=20)
+
+    # Botão "Difícil"
+    hard_button = create_button(difficulty_frame, "Difícil", lambda: set_difficulty("Difícil"))
+    hard_button.pack(pady=20)
+
+    # Botão "Voltar ao Menu"
+    back_button = create_button(difficulty_frame, "Voltar ao Menu", show_menu)
+    back_button.pack(pady=20)
+    
 # Função para mostrar o menu
 def show_menu():
     # Esconde o canvas e a label do score

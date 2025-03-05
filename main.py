@@ -126,11 +126,15 @@ def game_over():
         font=('consolas', 70), text="GAME OVER!", fill="red", tag="gameover"
     )
     canvas.create_text(
+        canvas.winfo_width() / 2, canvas.winfo_height() / 2,
+        font=('consolas', 40), text=f"Score: {score}", fill="white", tag="gameover"
+    )
+    canvas.create_text(
         canvas.winfo_width() / 2, canvas.winfo_height() / 2 + 50,
-        font=('consolas', 30), text="Pressione Enter para voltar ao menu",
+        font=('consolas', 30), text="Pressione Enter para continuar",
         fill="white", tag="gameover"
     )
-    window.bind('<Return>', lambda event: return_to_menu())  # Captura a tecla "Enter"
+    window.bind('<Return>', lambda event: save_score_and_return(score))
 
 # Função para retornar ao menu
 def return_to_menu():

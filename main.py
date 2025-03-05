@@ -266,6 +266,12 @@ def show_records():
 def records():
     show_records()
 
+# Função para retornar ao menu
+def return_to_menu():
+    canvas.delete("all")
+    show_menu()
+    window.unbind('<Return>')
+
 
 # Criação da janela principal
 window = tk.Tk()
